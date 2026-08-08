@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warnasuriya Gems Pvt | Premium Gemstones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-highlight: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            --liquid-blur: blur(40px) saturate(180%) brightness(1.05);
+            --accent: #d4af37;
+            --text: #f5f5f7;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ─── VIDEO BACKGROUND ─── */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background: #0a0a0a;
+        }
+
+        .video-bg video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .video-bg video.active {
+            opacity: 1;
+        }
+
+        /* ─── LIQUID GLASS ORBS ─── */
+        .orbs {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.35), transparent 70%);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(100, 149, 237, 0.3), transparent 70%);
+            bottom: -10%;
+            right: -5%;
+            animation-delay: -8s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255, 105, 180, 0.25), transparent 70%);
+            top: 40%;
+            left: 50%;
+            animation-delay: -16s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -60px) scale(1.15); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* ─── NOISE TEXTURE ─── */
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.04;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ─── iOS 26 GLASS LIQUID UTILITY ─── */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--liquid-blur);
+            -webkit-backdrop-filter: var(--liquid-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                inset 0 1px 1px var(--glass-highlight),
+                var(--glass-shadow);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.18) 0%,
+                transparent 40%,
+                transparent 60%,
+                rgba(255, 255, 255, 0.05) 100%
+            );
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .glass:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                inset 0 1px 1px var(--glass-highlight),
+                0 20px 60px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ─── FIXED HEADER ─── */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .header > * {
+            pointer-events: auto;
+        }
+
+        .logo-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            border-radius: 100px;
+        }
+
+        .logo-pill img {
+            height: 40px;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ─── FRONTEND / BACKEND LINKS (ALWAYS TOGETHER) ─── */
+        .admin-pill {
+            display: flex;
+            align-items: center;
+            padding: 6px;
+            border-radius: 100px;
+            gap: 2px;
+        }
+
+        .admin-pill a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .admin-pill a:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .admin-pill a.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-pill .divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ─── MAIN CONTENT ─── */
+        main {
+            position: relative;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 20px 100px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 32px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(212, 175, 55, 0.08);
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #b8941f);
+            color: #000;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ─── PRODUCTS ─── */
+        .products {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .product-card {
+            padding: 0;
+            cursor: pointer;
+            border-radius: 28px;
+        }
+
+        .product-card .card-media {
+            width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
+            position: relative;
+            border-radius: 28px 28px 0 0;
+        }
+
+        .product-card .card-media img,
+        .product-card .card-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .product-card:hover .card-media img,
+        .product-card:hover .card-media video {
+            transform: scale(1.08);
+        }
+
+        .product-card .card-body {
+            padding: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .product-card .meta {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .product-card .price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .product-card .inquiry-btn {
+            margin-top: 16px;
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 16px;
+        }
+
+        /* ─── CONTACT ─── */
+        .contact {
+            padding: 100px 0;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                padding: 16px 20px;
+            }
+            .logo-text {
+                display: none;
+            }
+        }
+
+        .contact-info {
+            padding: 40px;
+        }
+
+        .contact-info h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .contact-info > p {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .info-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .info-item div strong {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-item div a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .info-item div a:hover {
+            color: var(--accent);
+        }
+
+        .contact-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* ─── NOTIFICATIONS ─── */
+        .notification-container {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast {
+            padding: 16px 24px;
+            border-radius: 20px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 14px;
+            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: auto;
+            max-width: 360px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .toast.success {
+            background: rgba(34, 197, 94, 0.15);
+            backdrop-filter: blur(20px);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .toast.info {
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(20px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 60px;
+        }
+
+        footer strong {
+            color: var(--accent);
+        }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Background Videos -->
+    <div class="video-bg">
+        <!-- Rename your videos to match or update these src paths -->
+        <video class="active" muted loop playsinline>
+            <source src="video1.mp4" type="video/mp4">
+        </video>
+        <video muted loop playsinline>
+            <source src="video2.mp4" type="video/mp4">
+        </video>
+        <video muted loop playsinline>
+            <source src="video3.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Liquid Glass Orbs -->
+    <div class="orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Fixed Header -->
+    <header class="header">
+        <!-- Logo (Always Visible) -->
+        <div class="glass logo-pill">
+            <!-- Replace src with your logo filename -->
+            <img src="logo.png" alt="W.P. Gems Logo">
+            <span class="logo-text">W.P. GEMS</span>
+        </div>
+
+        <!-- Frontend & Backend Links (Always Together) -->
+        <div class="glass admin-pill">
+            <a href="index.html" class="active">Frontend</a>
+            <span class="divider"></span>
+            <a href="admin.html">Backend</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>✦</span> Sri Lanka's Finest Gemstones
+                </div>
+                <h1>Warnasuriya Gems Pvt</h1>
+                <p>Discover nature's most exquisite treasures. Ethically sourced, precision-cut gemstones delivered from our hands to yours.</p>
+                <div class="cta-group">
+                    <a href="#products" class="btn btn-primary">Explore Collection</a>
+                    <a href="#contact" class="btn btn-glass">Contact Us</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section class="products" id="products">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Curated Collection</h2>
+                    <p>Each stone tells a story. Click any gem to express interest.</p>
+                </div>
+                <div class="product-grid">
+                    <!-- Product 1 -->
+                    <div class="glass product-card" onclick="notifyProduct('Pink Sapphire Oval')">
+                        <div class="card-media">
+                            <!-- Replace with your image filename -->
+                            <img src="gem1.jpg" alt="Pink Sapphire">
+                        </div>
+                        <div class="card-body">
+                            <h3>Pink Sapphire</h3>
+                            <div class="meta">Oval Cut • Unheated • Ceylon</div>
+                            <div class="price">Inquire Now</div>
+                            <button class="btn btn-glass inquiry-btn">Request Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="glass product-card" onclick="notifyProduct('Golden Heart Gem')">
+                        <div class="card-media">
+                            <!-- Replace with your image filename -->
+                            <img src="gem2.jpg" alt="Golden Heart Gem">
+                        </div>
+                        <div class="card-body">
+                            <h3>Golden Beryl</h3>
+                            <div class="meta">Heart Cut • VVS Clarity</div>
+                            <div class="price">Inquire Now</div>
+                            <button class="btn btn-glass inquiry-btn">Request Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="glass product-card" onclick="notifyProduct('Padparadscha Sapphire')">
+                        <div class="card-media">
+                            <video muted loop playsinline autoplay>
+                                <source src="video3.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-body">
+                            <h3>Padparadscha</h3>
+                            <div class="meta">Cushion Cut • Rare Peach-Pink</div>
+                            <div class="price">Inquire Now</div>
+                            <button class="btn btn-glass inquiry-btn">Request Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="glass product-card" onclick="notifyProduct('Royal Blue Sapphire')">
+                        <div class="card-media">
+                            <video muted loop playsinline autoplay>
+                                <source src="video2.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-body">
+                            <h3>Royal Blue Sapphire</h3>
+                            <div class="meta">Oval Cut • Cornflower Blue</div>
+                            <div class="price">Inquire Now</div>
+                            <button class="btn btn-glass inquiry-btn">Request Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <div class="container">
+                <div class="contact-grid">
+                    <div class="glass contact-info">
+                        <h2>Get in Touch</h2>
+                        <p>Interested in a stone? Reach out directly. We respond within hours.</p>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">📱</div>
+                            <div>
+                                <strong>Phone / WhatsApp</strong>
+                                <a href="tel:+94772822029">+94 77 282 2029</a><br>
+                                <a href="tel:+94717928867">+94 71 792 8867</a>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">✉</div>
+                            <div>
+                                <strong>Email</strong>
+                                <a href="mailto:sahansanthush123wp@gmail.com">sahansanthush123wp@gmail.com</a>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">🏢</div>
+                            <div>
+                                <strong>Warnasuriya Gems Pvt</strong>
+                                <span style="color: var(--text-secondary); font-size: 15px;">Colombo, Sri Lanka</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="glass contact-form" onsubmit="handleContact(event)">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email or WhatsApp</label>
+                            <input type="text" required placeholder="+94 7X XXX XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Gem of Interest</label>
+                            <select>
+                                <option>General Inquiry</option>
+                                <option>Pink Sapphire</option>
+                                <option>Golden Beryl</option>
+                                <option>Padparadscha</option>
+                                <option>Royal Blue Sapphire</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea placeholder="Tell us what you're looking for..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 <strong>Warnasuriya Gems Pvt</strong>. All rights reserved. | W.P. GEMS PVT</p>
+    </footer>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notifications"></div>
+
+    <script>
+        // ─── VIDEO BACKGROUND ROTATOR ───
+        const videos = document.querySelectorAll('.video-bg video');
+        let currentVideo = 0;
+
+        function rotateVideo() {
+            videos[currentVideo].classList.remove('active');
+            currentVideo = (currentVideo + 1) % videos.length;
+            videos[currentVideo].classList.add('active');
+            videos[currentVideo].play();
+        }
+
+        // Start all videos and rotate every 8 seconds
+        videos.forEach(v => v.play());
+        setInterval(rotateVideo, 8000);
+
+        // ─── NOTIFICATION SYSTEM ───
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('notifications');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✓' : 'ℹ';
+            toast.innerHTML = `
+                <span style="font-size: 18px;">${icon}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.4s ease forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // Product click notification
+        function notifyProduct(gemName) {
+            showToast(`Interested in ${gemName}? We'll contact you shortly!`, 'info');
+        }
+
+        // Contact form notification
+        function handleContact(e) {
+            e.preventDefault();
+            showToast('Message sent! Warnasuriya Gems will contact you soon.', 'success');
+            e.target.reset();
+        }
+
+        // ─── SMOOTH SCROLL ───
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ─── HEADER SCROLL EFFECT ───
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.style.background = 'rgba(0,0,0,0.3)';
+                header.style.backdropFilter = 'blur(20px)';
+            } else {
+                header.style.background = 'transparent';
+                header.style.backdropFilter = 'none';
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>
